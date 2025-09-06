@@ -37,25 +37,42 @@ const Sidebar = ({ sidebar, setSidebar }) => {
                 </div>
 
                 <div className='px-6 mt-5 text-sm text-gray-600 font-medium'>
-                    {navItems.map(({ to, label, Icon }) => (
-                        <NavLink 
-                            key={to} 
-                            to={to} 
-                            // CORRECTED: Added 'end' prop to ensure only the exact path is marked as active.
-                            end={to === '/' || to === '/ai'} 
-                            onClick={() => setSidebar(false)} 
-                            className={({ isActive }) => 
-                                `px-3.5 py-2.5 flex items-center gap-3 rounded ${isActive ? 'bg-gradient-to-r from-[#3C81F6] to-[#9234EA] text-white' : 'hover:bg-gray-100'}`
-                            }
-                        >
-                            {({ isActive }) => (
-                                <>
-                                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : ''}`} />
+                    {navItems.map(({ to, label, Icon }) => {
+                        // Use a regular <a> tag for the external "Home Page" link
+                        if (to === '/') {
+                            return (
+                                <a
+                                    key={to}
+                                    href={to}
+                                    onClick={() => setSidebar(false)}
+                                    className='px-3.5 py-2.5 flex items-center gap-3 rounded hover:bg-gray-100'
+                                >
+                                    <Icon className='w-4 h-4' />
                                     {label}
-                                </>
-                            )}
-                        </NavLink>
-                    ))}
+                                </a>
+                            );
+                        }
+                        
+                        // Use NavLink for all internal app routes
+                        return (
+                            <NavLink 
+                                key={to} 
+                                to={to} 
+                                end={to === '/ai'}
+                                onClick={() => setSidebar(false)} 
+                                className={({ isActive }) => 
+                                    `px-3.5 py-2.5 flex items-center gap-3 rounded ${isActive ? 'bg-gradient-to-r from-[#3C81F6] to-[#9234EA] text-white' : 'hover:bg-gray-100'}`
+                                }
+                            >
+                                {({ isActive }) => (
+                                    <>
+                                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : ''}`} />
+                                        {label}
+                                    </>
+                                )}
+                            </NavLink>
+                        );
+                    })}
                 </div>
             </div>
             
@@ -77,4 +94,3 @@ const Sidebar = ({ sidebar, setSidebar }) => {
 };
 
 export default Sidebar;
-
