@@ -21,9 +21,17 @@ const BlogTitles = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    
+    if (!input.trim()) {
+      toast.error('Please enter a keyword or topic');
+      return;
+    }
+
     try {
       setLoading(true);
-      const prompt = `Generate a blog title for the keyword ${input} in the category ${selectedCategory}`;
+      setContent('');
+      
+      const prompt = `Generate compelling blog titles for the keyword "${input}" in the ${selectedCategory} category. Provide 5-7 creative, SEO-friendly titles.`;
       const { data } = await axios.post(
         '/api/ai/generate-blog-title',
         { prompt },
@@ -32,80 +40,118 @@ const BlogTitles = () => {
 
       if (data.success) {
         setContent(data.content);
+        toast.success('Titles generated successfully!');
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
+      console.error('Blog titles error:', error);
+      toast.error(error.response?.data?.message || error.message || 'Failed to generate titles');
     } finally {
       setLoading(false);
     }
   };
 
+  // Custom Markdown components for better styling
+  const MarkdownComponents = {
+    h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-white mt-2 mb-4" {...props} />,
+    h2: ({node, ...props}) => <h2 className="text-xl font-bold text-white mt-4 mb-3" {...props} />,
+    h3: ({node, ...props}) => <h3 className="text-lg font-semibold text-white mt-3 mb-2" {...props} />,
+    p: ({node, ...props}) => <p className="text-slate-300 leading-6 mb-3" {...props} />,
+    ul: ({node, ...props}) => <ul className="text-slate-300 mb-4 space-y-2 list-disc list-inside" {...props} />,
+    ol: ({node, ...props}) => <ol className="text-slate-300 mb-4 space-y-2 list-decimal list-inside" {...props} />,
+    li: ({node, ...props}) => <li className="text-slate-300 leading-6" {...props} />,
+    strong: ({node, ...props}) => <strong className="font-semibold text-white" {...props} />,
+    em: ({node, ...props}) => <em className="italic text-slate-200" {...props} />,
+  };
+
   return (
-    <div className='h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700'>
-      {/* left col */}
-      <form onSubmit={onSubmitHandler} className='w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200'>
+    <div className='min-h-screen p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-2 gap-6 text-slate-300'>
+      
+      {/* Left Column - Form */}
+      <form 
+        onSubmit={onSubmitHandler} 
+        className='w-full p-6 bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-700 h-fit'
+      >
         <div className='flex items-center gap-3'>
-          <Sparkles className='w-6 text-[#8E37EB]' />
-          <h1 className='text-xl font-semibold'>AI Title Generator</h1>
+          <Sparkles className='w-6 text-purple-400' />
+          <h1 className='text-xl font-bold text-slate-100'>AI Title Generator</h1>
         </div>
 
-        <p className='mt-6 text-sm font-medium'>Keyword</p>
+        {/* Keyword Input */}
+        <p className='mt-6 text-sm font-semibold text-slate-400'>Keyword/Topic</p>
         <input
           onChange={(e) => setInput(e.target.value)}
           value={input}
           type="text"
-          className='w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300'
-          placeholder='The future of artificial Intelligence is...'
+          className='w-full p-3 px-4 mt-2 outline-none text-sm text-slate-100 placeholder:text-slate-500 rounded-lg bg-slate-700/50 border border-slate-600 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all'
+          placeholder='The future of artificial intelligence...'
           required
         />
 
-        <p className='mt-4 text-sm font-medium'>Category</p>
-        <div className='mt-3 flex gap-3 flex-wrap sm:max-w-9/11'>
+        {/* Category Selection */}
+        <p className='mt-5 text-sm font-semibold text-slate-400'>Category</p>
+        <div className='mt-3 flex gap-3 flex-wrap'>
           {blogCategories.map((item) => (
             <span
               key={item}
               onClick={() => setSelectedCategory(item)}
-              className={`text-xs px-4 py-1 border rounded-full cursor-pointer ${selectedCategory === item ? 'bg-purple-50 text-purple-700' : 'text-gray-500 border-gray-300'}`}
+              className={`text-xs px-4 py-2 border rounded-full cursor-pointer transition-all duration-200 ${
+                selectedCategory === item 
+                  ? 'bg-purple-500/20 text-purple-300 border-purple-500 shadow-lg shadow-purple-500/20' 
+                  : 'text-slate-400 border-slate-600 hover:border-slate-500 hover:text-slate-300'
+              }`}
             >
               {item}
             </span>
           ))}
         </div>
 
+        <div className="h-px bg-slate-700 my-6" />
+
+        {/* Generate Button */}
         <button
           disabled={loading}
-          className='w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#C341F6] to-[#8E37EB] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer'
+          className='w-full flex justify-center items-center gap-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white px-4 py-3 text-sm font-semibold rounded-lg cursor-pointer shadow-lg shadow-purple-600/20 hover:shadow-xl hover:shadow-purple-600/30 hover:scale-[1.02] transition-all duration-300 ease-in-out disabled:opacity-50 disabled:hover:scale-100'
         >
           {loading ? (
-            <span className='w-4 h-4 my-1 border-2 border-t-transparent rounded-full animate-spin'></span>
+            <>
+              <span className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin'></span>
+              Generating...
+            </>
           ) : (
-            <Hash className='w-5' />
+            <>
+              <Hash className='w-5' />
+              Generate Titles
+            </>
           )}
-          Generate title
         </button>
       </form>
 
-      {/* right col */}
-      <div className='w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 '>
-        <div className='flex items-center gap-3'>
-          <Hash className='w-5 h-5 text-[#8E37EB]' />
-          <h1 className='text-xl font-semibold'>Generated titles</h1>
+      {/* Right Column - Output */}
+      <div className='w-full p-6 bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-700 flex flex-col min-h-[500px] lg:min-h-0 lg:max-h-[calc(100vh-4rem)] overflow-y-auto'>
+        <div className='flex items-center gap-3 pb-4 border-b border-slate-700'>
+          <Hash className='w-5 h-5 text-purple-400' />
+          <h1 className='text-xl font-bold text-slate-100'>Generated Titles</h1>
         </div>
 
+        {/* Placeholder */}
         {!content ? (
-          <div className='flex flex-1 justify-center items-center'>
-            <div className='text-sm flex flex-col items-center gap-5 text-gray-400'>
-              <Hash className='w-9 h-9' />
-              <p>Enter a topic and click "Generate title" to get started</p>
+          <div className='flex-1 flex justify-center items-center'>
+            <div className='text-sm flex flex-col items-center gap-5 text-slate-600'>
+              <Hash className='w-12 h-12' />
+              <p className='text-slate-500 text-center'>
+                Enter a topic and click<br/>
+                "Generate Titles" to get started
+              </p>
             </div>
           </div>
         ) : (
-          <div className='mt-3 h-full overflow-y-scroll text-sm text-slate-600 '>
-            <div className='reset-tw'>
-              <Markdown>{content}</Markdown>
-            </div>
+          /* Generated Content */
+          <div className='mt-3 flex-1 text-slate-300 text-sm leading-relaxed'>
+            <Markdown components={MarkdownComponents}>
+              {content}
+            </Markdown>
           </div>
         )}
       </div>

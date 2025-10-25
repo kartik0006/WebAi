@@ -15,3 +15,11 @@
 .cl-drawerRoot{
   z-index: 10;
 }
+/* Ensure no white shows behind sections */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #0B0F19; /* same as your darkest gradient base */
+  color-scheme: dark;
+  overflow-x: hidden;
+}

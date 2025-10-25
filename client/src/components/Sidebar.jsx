@@ -1,96 +1,353 @@
-import { Protect, useClerk, useUser } from '@clerk/clerk-react';
-import { Eraser, FileText, Hash, House, Image, Scissors, SquarePen, Users, LogOut, Globe } from 'lucide-react';
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+
+// import React, { useEffect, useRef } from 'react';
+// import { Protect, useClerk, useUser } from '@clerk/clerk-react';
+// import { Eraser, FileText, Hash, House, Image, Scissors, SquarePen, Users, LogOut, Globe } from 'lucide-react';
+// import { NavLink, useLocation } from 'react-router-dom';
+// import { gsap } from 'gsap';
+// import './Sidebar.css';
+
+// const navItems = [
+//   { to: '/', label: 'Home Page', Icon: Globe },
+//   { to: '/ai', label: 'Dashboard', Icon: House },
+//   { to: '/ai/write-article', label: 'Write Article', Icon: SquarePen },
+//   { to: '/ai/blog-titles', label: 'Blog Titles', Icon: Hash },
+//   { to: '/ai/generate-images', label: 'Generate Images', Icon: Image },
+//   { to: '/ai/remove-background', label: 'Remove Background', Icon: Eraser },
+//   { to: '/ai/remove-object', label: 'Remove Object', Icon: Scissors },
+//   { to: '/ai/review-resume', label: 'Review Resume', Icon: FileText },
+//   { to: '/ai/community', label: 'Community', Icon: Users },
+// ];
+
+// const Sidebar = ({ sidebar = true, setSidebar = () => {} }) => {
+//   const { user } = useUser();
+//   const { signOut, openUserProfile } = useClerk();
+//   const location = useLocation();
+
+//   const sidebarRef = useRef(null);
+//   const userSectionRef = useRef(null);
+//   const navItemsRef = useRef([]);
+//   const footerRef = useRef(null);
+
+//   // Use a fallback "guest" user for local testing
+//   const safeUser = user || {
+//     fullName: "Guest User",
+//     imageUrl: "https://ui-avatars.com/api/?name=Guest&background=3C81F6&color=fff",
+//   };
+
+//   useEffect(() => {
+//     if (!sidebarRef.current) return;
+
+//     navItemsRef.current.forEach(item => gsap.killTweensOf(item));
+
+//     const ctx = gsap.context(() => {
+//       const tl = gsap.timeline();
+
+//       tl.fromTo(userSectionRef.current,
+//         { opacity: 0, y: -30, scale: 0.8 },
+//         { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.7)" }
+//       );
+
+//       tl.fromTo(navItemsRef.current,
+//         { opacity: 0, x: -50 },
+//         { opacity: 1, x: 0, duration: 0.5, stagger: 0.1, ease: "power2.out" },
+//         "-=0.3"
+//       );
+
+//       tl.fromTo(footerRef.current,
+//         { opacity: 0, y: 30 },
+//         { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+//         "-=0.2"
+//       );
+
+//       const activeItem = navItemsRef.current.find(item =>
+//         item?.getAttribute('data-active') === 'true'
+//       );
+
+//       if (activeItem) {
+//         gsap.killTweensOf(activeItem);
+//         gsap.to(activeItem, {
+//           y: -2,
+//           boxShadow: "0 10px 25px -3px rgba(59, 130, 246, 0.2)",
+//           duration: 0.3,
+//           repeat: -1,
+//           yoyo: true,
+//           ease: "sine.inOut"
+//         });
+//       }
+//     }, sidebarRef);
+
+//     return () => ctx.revert();
+//   }, [location.pathname]);
+
+//   const addToNavRefs = el => {
+//     if (el && !navItemsRef.current.includes(el)) navItemsRef.current.push(el);
+//   };
+
+//   const handleNavClick = () => {
+//     if (window.innerWidth < 768) setSidebar(false);
+//     gsap.to(navItemsRef.current, {
+//       scale: 0.98,
+//       duration: 0.1,
+//       yoyo: true,
+//       repeat: 1,
+//       ease: "power2.inOut"
+//     });
+//   };
+
+//   const handleUserProfileClick = () => {
+//     gsap.to(userSectionRef.current, {
+//       scale: 0.95,
+//       duration: 0.1,
+//       yoyo: true,
+//       repeat: 1,
+//       ease: "power2.inOut",
+//       onComplete: () => openUserProfile?.()
+//     });
+//   };
+
+//   const handleSignOut = () => {
+//     gsap.to('.sign-out-btn', {
+//       rotation: 180,
+//       duration: 0.5,
+//       ease: "back.out(1.7)",
+//       onComplete: () => signOut?.()
+//     });
+//   };
+
+//   return (
+//     <div
+//       ref={sidebarRef}
+//       className={`advanced-sidebar ${sidebar ? 'sidebar-open' : 'sidebar-closed'}`}
+//       role="navigation"
+//       aria-label="Main navigation"
+//     >
+//       <div className='sidebar-content'>
+//         {/* User Section */}
+//         <div
+//           ref={userSectionRef}
+//           className='user-section'
+//           onClick={handleUserProfileClick}
+//           role="button"
+//           tabIndex={0}
+//           aria-label="Open user profile"
+//         >
+//           <img
+//             src={safeUser.imageUrl}
+//             alt={`${safeUser.fullName}'s avatar`}
+//             className='user-avatar'
+//           />
+//           <h1 className='user-name'>{safeUser.fullName}</h1>
+//           <div className='user-status'>
+//             <div className='status-dot'></div>
+//             <span>Online</span>
+//           </div>
+//         </div>
+
+//         {/* Navigation */}
+//         <nav className='navigation-menu'>
+//           {navItems.map(({ to, label, Icon }) => {
+//             const isActive = location.pathname === to || location.pathname.startsWith(to);
+//             return (
+//               <NavLink
+//                 key={to}
+//                 to={to}
+//                 className={`nav-item ${isActive ? 'nav-item-active' : ''}`}
+//                 ref={addToNavRefs}
+//                 data-active={isActive}
+//                 onClick={handleNavClick}
+//               >
+//                 <div className='nav-icon-wrapper'>
+//                   <Icon className='nav-icon' />
+//                   <div className='nav-glow'></div>
+//                 </div>
+//                 <span className='nav-label'>{label}</span>
+//                 <div className='nav-underline'></div>
+//                 {isActive && <div className='active-indicator' aria-hidden="true"></div>}
+//               </NavLink>
+//             );
+//           })}
+//         </nav>
+//       </div>
+
+//       {/* Footer */}
+//       <div ref={footerRef} className='sidebar-footer'>
+//         <div className='user-profile-mini' onClick={handleUserProfileClick}>
+//           <img
+//             src={safeUser.imageUrl}
+//             alt={`${safeUser.fullName}'s avatar`}
+//             className='user-avatar-mini'
+//           />
+//           <div className='user-info-mini'>
+//             <h2 className='user-name-mini'>{safeUser.fullName}</h2>
+//             <p className='user-plan'>
+//               <Protect plan='premium' fallback="Free Plan">Premium Plan</Protect>
+//             </p>
+//           </div>
+//         </div>
+//         <button onClick={handleSignOut} className='sign-out-btn'>
+//           <LogOut className='sign-out-icon' />
+//           <span className='sign-out-tooltip'>Sign Out</span>
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Sidebar;
+import React, { useEffect, useRef } from 'react';
+import { useClerk, useUser, Protect } from '@clerk/clerk-react';
+import { NavLink, useLocation } from 'react-router-dom';
+import {
+  Eraser, FileText, Hash, House, Image,
+  Scissors, SquarePen, Users, LogOut, Globe
+} from 'lucide-react';
+import { gsap } from 'gsap';
+import './Sidebar.css';
 
 const navItems = [
-    { to: '/', label: 'Home Page', Icon: Globe }, 
-    { to: '/ai', label: 'Dashboard', Icon: House },
-    { to: '/ai/write-article', label: 'Write Article', Icon: SquarePen },
-    { to: '/ai/blog-titles', label: 'Blog Titles', Icon: Hash },
-    { to: '/ai/generate-images', label: 'Generate Images', Icon: Image },
-    { to: '/ai/remove-background', label: 'Remove Background', Icon: Eraser },
-    { to: '/ai/remove-object', label: 'Remove Object', Icon: Scissors },
-    { to: '/ai/review-resume', label: 'Review Resume', Icon: FileText },
-    { to: '/ai/community', label: 'Community', Icon: Users },
+  { to: '/', label: 'Home Page', Icon: Globe },
+  { to: '/ai', label: 'Dashboard', Icon: House },
+  { to: '/ai/write-article', label: 'Write Article', Icon: SquarePen },
+  { to: '/ai/blog-titles', label: 'Blog Titles', Icon: Hash },
+  { to: '/ai/generate-images', label: 'Generate Images', Icon: Image },
+  { to: '/ai/remove-background', label: 'Remove Background', Icon: Eraser },
+  { to: '/ai/remove-object', label: 'Remove Object', Icon: Scissors },
+  { to: '/ai/review-resume', label: 'Review Resume', Icon: FileText },
+  { to: '/ai/community', label: 'Community', Icon: Users },
 ];
 
-const Sidebar = ({ sidebar, setSidebar }) => {
-    
-    const { user } = useUser();
-    const { signOut, openUserProfile } = useClerk();
+const Sidebar = ({ sidebar = true, setSidebar = () => {} }) => {
+  const { user } = useUser();
+  const { signOut, openUserProfile } = useClerk();
+  const location = useLocation();
 
-    if (!user) {
-        return null;
-    }
+  const sidebarRef = useRef(null);
+  const userSectionRef = useRef(null);
+  const navItemsRef = useRef([]);
+  const footerRef = useRef(null);
 
-    return ( 
-        <div className={`w-60 bg-white border-r border-gray-200 flex flex-col justify-between max-sm:absolute top-14 bottom-0 ${sidebar ? 'translate-x-0' : 'max-sm:-translate-x-full'} transition-all duration-300 ease-in-out`}>
-            
-            <div className='w-full'>
-                <div 
-                    className='my-7 w-full cursor-pointer px-4'
-                    onClick={() => openUserProfile()}
-                >
-                    <img src={user.imageUrl} alt="User avatar" className='w-13 rounded-full mx-auto'/>
-                    <h1 className='mt-1 text-center truncate'>{user.fullName}</h1>
-                </div>
+  const safeUser = user || {
+    fullName: "Guest User",
+    imageUrl: "https://ui-avatars.com/api/?name=Guest&background=3C81F6&color=fff",
+  };
 
-                <div className='px-6 mt-5 text-sm text-gray-600 font-medium'>
-                    {navItems.map(({ to, label, Icon }) => {
-                        // Use a regular <a> tag for the external "Home Page" link
-                        if (to === '/') {
-                            return (
-                                <a
-                                    key={to}
-                                    href={to}
-                                    onClick={() => setSidebar(false)}
-                                    className='px-3.5 py-2.5 flex items-center gap-3 rounded hover:bg-gray-100'
-                                >
-                                    <Icon className='w-4 h-4' />
-                                    {label}
-                                </a>
-                            );
-                        }
-                        
-                        // Use NavLink for all internal app routes
-                        return (
-                            <NavLink 
-                                key={to} 
-                                to={to} 
-                                end={to === '/ai'}
-                                onClick={() => setSidebar(false)} 
-                                className={({ isActive }) => 
-                                    `px-3.5 py-2.5 flex items-center gap-3 rounded ${isActive ? 'bg-gradient-to-r from-[#3C81F6] to-[#9234EA] text-white' : 'hover:bg-gray-100'}`
-                                }
-                            >
-                                {({ isActive }) => (
-                                    <>
-                                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : ''}`} />
-                                        {label}
-                                    </>
-                                )}
-                            </NavLink>
-                        );
-                    })}
-                </div>
-            </div>
-            
-            <div className='w-full border-t border-gray-200 p-4 px-7 flex items-center justify-between'>
-                <div onClick={() => openUserProfile()} className='flex gap-2 items-center cursor-pointer'>
-                    <img src={user.imageUrl} className='w-8 rounded-full' alt="" />
-                    <div>
-                        <h1 className='text-sm font-medium'>{user.fullName}</h1>
-                        <p className='text-xs text-gray-500'>
-                            <Protect plan='premium' fallback="Free">Premium</Protect>
-                             Plan
-                        </p>
-                    </div>
-                </div>
-                <LogOut onClick={() => signOut()} className='w-4.5 text-gray-400 hover:text-gray-700 transition cursor-pointer' />
-            </div>
+  // GSAP mount animation
+  useEffect(() => {
+    if (!sidebarRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        sidebarRef.current,
+        { x: -100, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }
+      );
+
+      const tl = gsap.timeline({ delay: 0.1 });
+      tl.fromTo(
+        userSectionRef.current,
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.5)" }
+      ).fromTo(
+        navItemsRef.current,
+        { opacity: 0, x: -30 },
+        { opacity: 1, x: 0, stagger: 0.08, duration: 0.4, ease: "power2.out" },
+        "-=0.2"
+      ).fromTo(
+        footerRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        "-=0.2"
+      );
+    }, sidebarRef);
+
+    return () => ctx.revert();
+  }, [location.pathname]);
+
+  const addToNavRefs = (el) => {
+    if (el && !navItemsRef.current.includes(el)) navItemsRef.current.push(el);
+  };
+
+  const handleNavClick = () => {
+    if (window.innerWidth < 768) setSidebar(false);
+  };
+
+  const handleUserProfileClick = () => openUserProfile?.();
+
+  const handleSignOut = () => {
+    gsap.to('.sign-out-btn', {
+      rotation: 180,
+      duration: 0.5,
+      ease: "back.out(1.7)",
+      onComplete: () => signOut?.()
+    });
+  };
+
+  return (
+    <aside
+      ref={sidebarRef}
+      className={`advanced-sidebar ${sidebar ? 'sidebar-open' : 'sidebar-closed'}`}
+    >
+      <div className="sidebar-content">
+        {/* === User Section === */}
+        <div ref={userSectionRef} className="user-section" onClick={handleUserProfileClick}>
+          <img src={safeUser.imageUrl} alt="user" className="user-avatar" />
+          <h1 className="user-name">{safeUser.fullName}</h1>
+          <div className="user-status">
+            <div className="status-dot"></div>
+            <span>Online</span>
+          </div>
         </div>
-    );
+
+        {/* === Navigation === */}
+        <nav className="navigation-menu">
+          {navItems.map(({ to, label, Icon }) => {
+            const isActive =
+              location.pathname === to ||
+              (to !== '/ai' && location.pathname.startsWith(to + '/'));
+
+            return (
+              <NavLink
+                key={to}
+                to={to}
+                className={`nav-item ${isActive ? 'nav-item-active' : ''}`}
+                data-active={isActive}
+                ref={addToNavRefs}
+                onClick={handleNavClick}
+              >
+                <div className="nav-icon-wrapper">
+                  <Icon className="nav-icon" />
+                  <div className="nav-glow"></div>
+                </div>
+                <span className="nav-label">{label}</span>
+              </NavLink>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* === Footer === */}
+      <div ref={footerRef} className="sidebar-footer">
+        <div className="user-profile-mini" onClick={handleUserProfileClick}>
+          <img
+            src={safeUser.imageUrl}
+            alt="avatar"
+            className="user-avatar-mini"
+          />
+          <div className="user-info-mini">
+            <h2 className="user-name-mini">{safeUser.fullName}</h2>
+            <p className="user-plan">
+              <Protect plan="premium" fallback="Free Plan">Premium Plan</Protect>
+            </p>
+          </div>
+        </div>
+
+        <button onClick={handleSignOut} className="sign-out-btn">
+          <LogOut className="sign-out-icon" />
+          <span className="sign-out-tooltip">Sign Out</span>
+        </button>
+      </div>
+    </aside>
+  );
 };
 
 export default Sidebar;

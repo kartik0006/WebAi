@@ -1,0 +1,41 @@
+/* RemoveBackground.css & BlogTitles.css */
+.remove-bg-output::-webkit-scrollbar,
+.blog-titles-output::-webkit-scrollbar {
+  width: 8px;
+}
+
+.remove-bg-output::-webkit-scrollbar-track,
+.blog-titles-output::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 10px;
+}
+
+.remove-bg-output::-webkit-scrollbar-thumb,
+.blog-titles-output::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+
+.remove-bg-output::-webkit-scrollbar-thumb:hover,
+.blog-titles-output::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Markdown styling */
+.prose {
+  color: #cbd5e1;
+}
+
+.prose h1, .prose h2, .prose h3 {
+  color: #f1f5f9;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose ul, .prose ol {
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-bottom: 0.5em;
+}

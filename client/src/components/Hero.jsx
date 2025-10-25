@@ -1,32 +1,149 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { assets } from '../assets/assets'
+import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
+import { gsap } from 'gsap';
+import './Hero.css';
 
 const Hero = () => {
-    const navigate = useNavigate()
-  return (
-    <div className='px-4 sm:px-20 xl:px-32 relative inline-flex flex-col w-full justify-center bg-[url(/gradientBackground.png)] bg-cover bg-no-repeat min-h-screen'>
-        
-        <div className='text-center mb-6'>
-    <h1 className='text-3xl sm:text-5xl md:text-6xl 2xl:text-7xl font-semibold mx-auto leading-[1.2]'>Create amazing content <br/> with
-        <span className='text-primary'> AI tools</span>
-    </h1>
-            <p className='mt-4 max-w-xs sm:max-w-lg 2xl:max-w-xl m-auto max-sm:text-xs text-gray-600'>Transform your content creation with our suite of premium AI tools. Write articles, generate images, and enhance your workflow.</p>
-        </div>
+    const navigate = useNavigate();
+    const { user } = useUser();
+    
+    const heroRef = useRef(null);
+    const headingRef = useRef(null);
+    const subtitleRef = useRef(null);
+    const buttonRef = useRef(null);
+    const backgroundRef = useRef(null);
 
-    <div className='flex flex-wrap justify-center gap-4 text-sm max-sm:text-xs'>
-    <button onClick={() => navigate('/ai')} className='bg-primary text-white px-10 py-3 rounded-lg hover:scale-102 active:scale-95 transition cursor-pointer'>
-        Start creating now
-    </button>
-    </div>
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            // Clean entrance animations
+            const tl = gsap.timeline();
+            
+            tl.fromTo(headingRef.current, 
+                { opacity: 0, y: 40 },
+                { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }
+            )
+            .fromTo(subtitleRef.current,
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+                "-=0.8"
+            )
+            .fromTo(buttonRef.current,
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+                "-=0.5"
+            );
 
-    <div className='flex items-center gap-4 mt-8 mx-auto text-gray-600'>
-    <img src={assets.user_group} alt="" className='h-8'/>
-            Trusted by 10k+ people
-    </div>
+            // Subtle background animation
+            gsap.to(backgroundRef.current, {
+                backgroundPosition: '50% 60%',
+                ease: "none",
+                scrollTrigger: {
+                    trigger: heroRef.current,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: 1
+                }
+            });
 
-    </div>
-    )
-}
+            // Button hover effect with GSAP
+            const button = buttonRef.current;
+            if (button) {
+                button.addEventListener('mouseenter', () => {
+                    gsap.to(button, {
+                        scale: 1.02,
+                        duration: 0.3,
+                        ease: "power2.out"
+                    });
+                });
+                
+                button.addEventListener('mouseleave', () => {
+                    gsap.to(button, {
+                        scale: 1,
+                        duration: 0.3,
+                        ease: "power2.out"
+                    });
+                });
+            }
 
-export default Hero
+        }, heroRef);
+
+        return () => ctx.revert();
+    }, []);
+
+    const handleGetStarted = () => {
+        if (user) {
+            navigate('/ai');
+        } else {
+            navigate('/sign-up');
+        }
+    };
+
+    return (
+        <section ref={heroRef} className="modern-hero">
+            {/* Clean Background */}
+            <div ref={backgroundRef} className="hero-background">
+                <div className="background-glow"></div>
+            </div>
+            
+            {/* Subtle Particles */}
+            <div className="floating-particles">
+                {[...Array(15)].map((_, i) => (
+                    <div key={i} className="particle" style={{
+                        left: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 5}s`
+                    }}></div>
+                ))}
+            </div>
+
+            {/* Main Content */}
+            <div className="hero-container">
+                <div className="hero-content">
+                    {/* Main Heading */}
+                    <h1 ref={headingRef} className="hero-heading">
+                        Elevate Your Content<br />
+                        with <span className="accent-text">AI Innovation</span>
+                    </h1>
+                    
+                    {/* Subtitle */}
+                    <p ref={subtitleRef} className="hero-subtitle">
+                        Transform your creative workflow with our enterprise-grade AI tools. 
+                        Generate stunning content, automate workflows, and scale your vision.
+                    </p>
+                    
+                    {/* CTA Section */}
+                    <div className="cta-section">
+                        <button 
+                            ref={buttonRef}
+                            onClick={handleGetStarted}
+                            className="cta-button"
+                        >
+                            <span className="button-text">Start Creating</span>
+                            <span className="button-arrow">→</span>
+                        </button>
+                        
+                        {/* Trust Badge */}
+                        <div className="trust-badge">
+                            <div className="trust-stars">
+                                <span>⭐</span>
+                                <span>⭐</span>
+                                <span>⭐</span>
+                                <span>⭐</span>
+                                <span>⭐</span>
+                            </div>
+                            <span>Trusted by 10,000+ creators</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="scroll-indicator">
+                <div className="scroll-line"></div>
+                <span>Scroll to explore</span>
+            </div>
+        </section>
+    );
+};
+
+export default Hero;

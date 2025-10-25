@@ -1,0 +1,56 @@
+/* Plan.css - consistent look with Hero & Testimonials */
+
+.plan-section {
+  position: relative;
+  padding: 5.5rem 1rem;
+  background: linear-gradient(180deg, rgba(31,43,74,1) 0%, rgba(11,15,25,1) 100%);
+  color: #e6eef8;
+}
+
+.plan-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  padding: 0 1rem;
+}
+
+.plan-header { margin-bottom: 2.25rem; }
+.plan-title {
+  font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  font-weight: 800;
+  color: #fff;
+}
+.plan-sub { margin-top: 0.65rem; color: #aebfd8; max-width: 720px; margin-left: auto; margin-right: auto; }
+
+/* card */
+.plan-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  padding: 1.25rem;
+  border-radius: 16px;
+  box-shadow: 0 14px 50px rgba(2,6,23,0.6);
+  will-change: transform, opacity;
+}
+
+/* skeleton */
+.plan-skeleton .skeleton-line {
+  height: 16px;
+  width: 36%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.06));
+  border-radius: 8px;
+  margin: 0 auto 1rem;
+}
+.plan-skeleton .skeleton-line.short { width: 28%; }
+.plan-skeleton .skeleton-block {
+  height: 260px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border-radius: 12px;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .plan-section { padding: 3rem 0; }
+  .plan-skeleton .skeleton-block { height: 220px; }
+}

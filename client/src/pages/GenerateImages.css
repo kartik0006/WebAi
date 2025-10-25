@@ -1,0 +1,39 @@
+/* GenerateImages.css */
+.generate-image-output::-webkit-scrollbar {
+  width: 8px;
+}
+
+.generate-image-output::-webkit-scrollbar-track {
+  background: #1e293b; /* slate-800 */
+  border-radius: 10px;
+}
+
+.generate-image-output::-webkit-scrollbar-thumb {
+  background: #475569; /* slate-600 */
+  border-radius: 10px;
+}
+
+.generate-image-output::-webkit-scrollbar-thumb:hover {
+  background: #64748b; /* slate-500 */
+}
+
+/* Smooth transitions for all interactive elements */
+.generate-image-output * {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Loading animation enhancement */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.loading-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #1e293b 8%, #334155 18%, #1e293b 33%);
+  background-size: 800px 104px;
+}
